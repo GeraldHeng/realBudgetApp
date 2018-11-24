@@ -67,7 +67,9 @@ export default class BudgetHome extends Component {
       isVisible: false,
       realm: null,
       action: "",
-      selectedBudgetItem: null
+      selectedBudgetItem: null,
+      totalBudget: 0,
+      totalExpense: 0
     };
   }
 
@@ -91,7 +93,21 @@ export default class BudgetHome extends Component {
   _getAllBudgetItem = () => {
     Realm.open({ schema: [budgetSchema, expenseSchema, timelineSchema] }).then(
       realm => {
-        this.setState({ realm: realm });
+        var totalBudget = 0;
+        for (var i = 0; i < realm.objects("Budget").length; i++) {
+          totalBudget += realm.objects("Budget")[i].amount;
+        }
+
+        var totalExpense = 0;
+        for (var i = 0; i < realm.objects("Expense").length; i++) {
+          totalExpense += realm.objects("Expense")[i].amount;
+        }
+
+        this.setState({
+          realm: realm,
+          totalBudget: totalBudget,
+          totalExpense: totalExpense
+        });
       }
     );
   };
@@ -99,7 +115,12 @@ export default class BudgetHome extends Component {
   render() {
     return (
       <Container>
-        <TimeLine style={{ backgroundColor: "#0000FF", height: 200 }} />
+        <TimeLine
+          style={{ backgroundColor: "#0000FF", height: 200 }}
+          realm={this.state.realm}
+          totalBudget={this.state.totalBudget}
+          totalExpense={this.state.totalExpense}
+        />
         <BudgetList
           navigation={this.props.navigation}
           realm={this.state.realm}

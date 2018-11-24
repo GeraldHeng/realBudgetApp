@@ -62,7 +62,6 @@ class BudgetItem extends PureComponent {
         });
       }
     );
-    console.log("_calculateTotalSpent " + this.state.totalSpent);
   };
   render() {
     return (
